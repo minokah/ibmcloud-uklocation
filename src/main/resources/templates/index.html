@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UK Postcode Information Lookup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px ;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #0056b3;
+        }
+        .info {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #e9f5ff;
+            border-left: 4px solid #1aff6e;
+            border-radius: 4px;
+        }
+        .label {
+            font-weight: bold;
+        }
+        .input-section {
+            margin-bottom: 20px;
+        }
+        .input-section input {
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        .input-section button {
+            padding: 10px 15px;
+            background-color: #0056b3;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .input-section button:hover {
+            background-color: #004494;
+        }
+    </style>
+
+    <script>
+        async function getPostcodeDetails() {
+            const postcode = document.getElementById('postcodeInput').value;
+            if (!postcode) {
+                alert('Please enter a postcode.');
+                return;
+            }
+            try {
+                const response = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(postcode)}`);
+                const data = await response.json();
+                if (data.status === 200) {
+                    document.getElementById('details').innerHTML = `
+                        <div class="info">
+                            <p><span class=\"label\">Country:<\/span> United Kingdom<\/p>
+                            <p><span class="label">Region:</span> ${data.result.region}</p>
+                            <p><span class="label">County:</span> ${data.result.admin_county}</p>
+                            <p><span class="label">Admin District:</span> ${data.result.admin_district}</p>
+                            <p><span class="label">Admin Ward:</span> ${data.result.admin_ward}</p>
+                            <p><span class="label">Parish:</span> ${data.result.parish}</p>
+                            <p><span class="label">Parliamentary Constituency:</span> ${data.result.parliamentary_constituency}</p>
+                            <p><span class="label">Latitude:</span> ${data.result.latitude}</p>
+                            <p><span class="label">Longitude:</span> ${data.result.longitude}</p>
+                            <p><span class="label">NHS Region:</span> ${data.result.nhs_ha}</p>
+                            <p><span class="label">Primary Care Trust:</span> ${data.result.primary_care_trust}</p>
+                            <p><span class="label">CCG:</span> ${data.result.ccg}</p>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('details').innerHTML = `<p style="color: red;">${data.error}</p>`;
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('details').innerHTML = '<p style="color: red;">Failed to retrieve data. Please try again later.</p>';
+            }
+        }
+    </script>
+</head>
+
+
+<body>
+<div class="container">
+    <img src="uk.webp" style="height: 40px;" >
+    <h1>UK Postcode Information Lookup</h1>
+
+    <div class="input-section">
+        <input type="text" id="postcodeInput" placeholder="Enter postcode (e.g., OX49 5NU)">
+        <button onclick="getPostcodeDetails()">Get Details</button>
+    </div>
+    <div id="details"></div>
+</div>
+</body>
+
+</html>
+
